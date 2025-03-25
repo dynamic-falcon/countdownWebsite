@@ -7,6 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
+        @font-face {
+            font-family: 'Futura';
+            src: url('Futura-Extra-Black-Condensed-Italic.otf') format('opentype'),
+                 url('Futura-Extra-Black-Condensed-Italic.ttf') format('truetype');
+            font-weight: 900;
+            font-style: italic;
+            font-stretch: condensed;
+        }
+
         body, html {
             height: 100%;
             margin: 0;
@@ -33,6 +42,10 @@
             text-transform: uppercase;
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(228, 1, 57, 0.5);
+            font-family: "Futura", "Arial Black", "Arial", sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            font-stretch: condensed;
         }
 
         .countdown-container {
@@ -85,6 +98,43 @@
             letter-spacing: 1px;
         }
 
+        .progress-container {
+            width: 80%;
+            max-width: 500px;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #602590, #e40139);
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 3px black;
+        }
+
+        .progress-dates {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            max-width: 500px;
+            margin-top: 5px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .countdown-header {
                 font-size: 2rem;
@@ -123,6 +173,10 @@
             .countdown-header {
                 font-size: 1.5rem;
             }
+            
+            .progress-container {
+                width: 90%;
+            }
         }
     </style>
 </head>
@@ -153,12 +207,24 @@
             <div class="clock-container">
                 <div class="clock" id="local-time"></div>
             </div>
+            
+            <!-- Progress bar section -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+            <div class="progress-dates">
+                <span>30 Jan 2025</span>
+                <span>30 Jan 2026</span>
+            </div>
         </div>
     </div>
 
     <script>
         // Set your target date here (YYYY-MM-DDTHH:MM:SS format)
         const targetDate = new Date('2026-01-30T00:00:00+08:00'); // Hong Kong timezone (UTC+8)
+        const startDate = new Date('2025-01-30T00:00:00+08:00');
         
         function updateCountdown() {
             const now = new Date();
@@ -166,6 +232,8 @@
             
             if (diff <= 0) {
                 document.getElementById('countdown').innerHTML = '<div class="time-value" style="font-size: 3rem;">TIME HAS COME</div>';
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressText').textContent = '100%';
                 return;
             }
             
@@ -178,6 +246,23 @@
             document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
             document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // Update progress bar
+            updateProgressBar(now);
+        }
+        
+        function updateProgressBar(now) {
+            const totalDuration = targetDate - startDate;
+            const elapsedDuration = now - startDate;
+            
+            let percentage = (elapsedDuration / totalDuration) * 100;
+            percentage = Math.max(0, Math.min(100, percentage)); // Clamp between 0-100
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = percentage.toFixed(1) + '%';
         }
         
         function updateClock() {
