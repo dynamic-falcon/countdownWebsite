@@ -204,6 +204,27 @@
                 </div>
             </div>
             
+            <div class="countdown-header">D-Day</div>
+            
+            <div class="timer" id="dday-countdown">
+                <div class="time-unit">
+                    <div class="time-value" id="dday-days">00</div>
+                    <div class="time-label">Days</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="dday-hours">00</div>
+                    <div class="time-label">Hours</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="dday-minutes">00</div>
+                    <div class="time-label">Minutes</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="dday-seconds">00</div>
+                    <div class="time-label">Seconds</div>
+                </div>
+            </div>
+            
             <div class="clock-container">
                 <div class="clock" id="local-time"></div>
             </div>
@@ -225,6 +246,7 @@
         // Set your target date here (YYYY-MM-DDTHH:MM:SS format)
         const targetDate = new Date('2025-06-02T00:08:15+08:00'); // Hong Kong timezone (UTC+8)
         const startDate = new Date('2025-05-13T00:00:00+08:00');
+        const ddayDate = new Date('2026-01-30T00:00:00+08:00'); // D-Day target date
         
         function updateCountdown() {
             const now = new Date();
@@ -249,6 +271,28 @@
             
             // Update progress bar
             updateProgressBar(now);
+            
+            // Update D-Day countdown
+            updateDdayCountdown(now);
+        }
+        
+        function updateDdayCountdown(now) {
+            const diff = ddayDate - now;
+            
+            if (diff <= 0) {
+                document.getElementById('dday-countdown').innerHTML = '<div class="time-value" style="font-size: 3rem;">D-DAY HAS ARRIVED</div>';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('dday-days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('dday-hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('dday-minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('dday-seconds').textContent = seconds.toString().padStart(2, '0');
         }
         
         function updateProgressBar(now) {
